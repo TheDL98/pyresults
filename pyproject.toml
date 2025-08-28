@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "py_results"
-version = "0.0.1"
+version = "0.0.1b"
 description = "A python project to create calculate results and output their resuts with excel datasheets."
 keywords = ["python", "Excel"]
 repository = "https://github.com/TheDL98/pyresults"
@@ -9,8 +9,9 @@ license = "MIT"
 readme = ["LICENSE"]
 
 [tool.poetry.dependencies]
-python = "^3.13"
+python = ">=3.13,<3.14"
 xlsxwriter = "^3.2.5"
+pyside6 = "^6.9.2"
 
 [build-system]
 requires = ["poetry-core"]

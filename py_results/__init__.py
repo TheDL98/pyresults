@@ -1,64 +1,16 @@
 import sqlite3
 import xlsxwriter
+from db_init import db_init
+from PySide6.QtWidgets import QApplication
+import sys
+import main_window
 
 
-with sqlite3.connect("results.db") as con:
-    cur = con.cursor()
-    cur.executescript("""
---
--- File generated with SQLiteStudio v3.4.17 on Wed Aug 27 11:46:30 2025
---
--- Text encoding used: System
---
-PRAGMA foreign_keys = off;
-BEGIN TRANSACTION;
+db_init()
 
--- Table: sample_locations
-CREATE TABLE IF NOT EXISTS sample_locations (
-    location_id    INTEGER PRIMARY KEY AUTOINCREMENT
-                           UNIQUE
-                           NOT NULL,
-    location_name  TEXT    NOT NULL
-                           UNIQUE,
-    sample_type_id INTEGER REFERENCES sample_types (sample_type_id) 
-);
+app = QApplication(sys.argv)
 
+a = main_window.MainWindow()
+a.show()
 
--- Table: sample_types
-CREATE TABLE IF NOT EXISTS sample_types (
-    sample_type_id   INTEGER PRIMARY KEY AUTOINCREMENT
-                             UNIQUE
-                             NOT NULL,
-    sample_type_name TEXT    UNIQUE
-);
-
-
--- Table: samples
-CREATE TABLE IF NOT EXISTS samples (
-    sample_id    INTEGER PRIMARY KEY AUTOINCREMENT
-                         UNIQUE
-                         NOT NULL,
-    sample_date  TEXT,
-    sample_time  TEXT,
-    sample_value REAL    NOT NULL,
-    location_id  INTEGER REFERENCES sample_locations (location_id),
-    test_type_id INTEGER REFERENCES test_types (test_type_id) 
-);
-
-
--- Table: test_types
-CREATE TABLE IF NOT EXISTS test_types (
-    test_type_id   INTEGER PRIMARY KEY AUTOINCREMENT
-                           UNIQUE
-                           NOT NULL,
-    test_type_name TEXT    UNIQUE,
-    test_type_unit TEXT
-);
-
-
-COMMIT TRANSACTION;
-PRAGMA foreign_keys = on;
-
-""")
-    con.commit()
-    
+app.exec()
