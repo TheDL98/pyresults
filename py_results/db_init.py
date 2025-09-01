@@ -3,59 +3,64 @@ import sqlite3
 def db_init():
     with sqlite3.connect("results.db") as con:
         con.executescript("""
-    --
-    -- File generated with SQLiteStudio v3.4.17 on Wed Aug 27 11:46:30 2025
-    --
-    -- Text encoding used: System
-    --
-    PRAGMA foreign_keys = off;
-    BEGIN TRANSACTION;
+--
+-- File generated with SQLiteStudio v3.4.17 on Mon Sep 1 13:00:56 2025
+--
+-- Text encoding used: System
+--
+PRAGMA foreign_keys = off;
+BEGIN TRANSACTION;
 
-    -- Table: sample_locations
-    CREATE TABLE IF NOT EXISTS sample_locations (
-        location_id    INTEGER PRIMARY KEY AUTOINCREMENT
+-- Table: MainCategories
+CREATE TABLE IF NOT EXISTS MainCategories (
+    MainCategoryID   INTEGER PRIMARY KEY AUTOINCREMENT
+                             UNIQUE
+                             NOT NULL,
+    MainCategoryName TEXT    UNIQUE
+                             NOT NULL
+);
+
+
+-- Table: Samples
+CREATE TABLE IF NOT EXISTS Samples (
+    SampleID       INTEGER PRIMARY KEY AUTOINCREMENT
+                           UNIQUE
+                           NOT NULL,
+    SampleDate     TEXT,
+    SampleTime     TEXT,
+    SampleValue    REAL    NOT NULL,
+    MainCategoryID INTEGER REFERENCES MainCategories (MainCategoryID) 
+                           NOT NULL,
+    SubCategoryID          REFERENCES SubCategories (SubCategoryID),
+    TestTypeID     INTEGER REFERENCES TestTypes (TestTypeID) 
+                           NOT NULL
+);
+
+
+-- Table: SubCategories
+CREATE TABLE IF NOT EXISTS SubCategories (
+    SubCategoryID   INTEGER PRIMARY KEY AUTOINCREMENT
                             UNIQUE
                             NOT NULL,
-        location_name  TEXT    NOT NULL
+    SubCategoryName TEXT    NOT NULL
                             UNIQUE,
-        sample_type_id INTEGER REFERENCES sample_types (sample_type_id) 
-    );
+    MainCategoryID          REFERENCES MainCategories (MainCategoryID) 
+                            NOT NULL
+);
 
 
-    -- Table: sample_types
-    CREATE TABLE IF NOT EXISTS sample_types (
-        sample_type_id   INTEGER PRIMARY KEY AUTOINCREMENT
-                                UNIQUE
-                                NOT NULL,
-        sample_type_name TEXT    UNIQUE
-    );
+-- Table: TestTypes
+CREATE TABLE IF NOT EXISTS TestTypes (
+    TestTypeID   INTEGER PRIMARY KEY AUTOINCREMENT
+                         UNIQUE
+                         NOT NULL,
+    TestTypeName TEXT    UNIQUE,
+    TestTypeUnit TEXT
+);
 
 
-    -- Table: samples
-    CREATE TABLE IF NOT EXISTS samples (
-        sample_id    INTEGER PRIMARY KEY AUTOINCREMENT
-                            UNIQUE
-                            NOT NULL,
-        sample_date  TEXT,
-        sample_time  TEXT,
-        sample_value REAL    NOT NULL,
-        location_id  INTEGER REFERENCES sample_locations (location_id),
-        test_type_id INTEGER REFERENCES test_types (test_type_id) 
-    );
-
-
-    -- Table: test_types
-    CREATE TABLE IF NOT EXISTS test_types (
-        test_type_id   INTEGER PRIMARY KEY AUTOINCREMENT
-                            UNIQUE
-                            NOT NULL,
-        test_type_name TEXT    UNIQUE,
-        test_type_unit TEXT
-    );
-
-
-    COMMIT TRANSACTION;
-    PRAGMA foreign_keys = on;
+COMMIT TRANSACTION;
+PRAGMA foreign_keys = on;
 
     """)
         con.commit()
